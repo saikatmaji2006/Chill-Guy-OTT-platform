@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movie Streaming</title>
+    <link rel="icon" href="https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Light_bulb_idea.svg/1200px-Light_bulb_idea.svg.png" type="image/png">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #333;
+            margin: 0;
+            padding: 0;
+            color: #fff;
+        }
+
+        header {
+            background-color: #222;
+            color: #fff;
+            padding: 20px 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        #Title {
+            margin: 0;
+            font-size: 2.5rem;
+        }
+
+        nav {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            width: 100%;
+        }
+
+        /* Dark Mode Button Container */
+        #dark-mode-container {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+        }
+
+        button {
+            padding: 10px 20px;
+            margin-left: 10px;
+            background-color: #007BFF;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1rem;
+            display: flex;
+            align-items: center;
+        }
+
+        button img {
+            width: 20px;
+            height: 20px;
+            margin-left: 5px;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        button:focus {
+            outline: none;
+        }
+
+        /* Dark Mode */
+        body.dark-mode {
+            background-color: #333;
+            color: #fff;
+        }
+
+        body.dark-mode header {
+            background-color: #222;
+        }
+
+        body.dark-mode button {
+            background-color: #007BFF;
+            color: #fff;
+        }
+
+        body.dark-mode button:hover {
+            background-color: #0056b3;
+        }
+
+        label {
+            font-size: 1.1rem;
+            margin-right: 10px;
+        }
+
+        #movie_name {
+            padding: 10px;
+            font-size: 1rem;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            margin-right: 10px;
+            width: 300px;
+        }
+
+        /* Styling Suggestion Bar for Dark Mode */
+        #suggestions {
+            max-height: 200px;
+            overflow-y: auto;
+            margin-top: 5px;
+            position: absolute;
+            background-color: #444;
+            color: #fff;
+            border: 1px solid #ccc;
+            width: calc(100% - 22px);
+            box-sizing: border-box;
+            z-index: 10;
+            display: flex;
+            flex-wrap: wrap;
+            padding: 5px;
+            border-radius: 5px;
+        }
+
+        .suggestion-item {
+            padding: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            flex: 1 0 45%;
+            box-sizing: border-box;
+            background-color: #555;
+            margin: 2px;
+            border-radius: 5px;
+        }
+
+        .suggestion-item:hover {
+            background-color: #007BFF;
+            color: white;
+        }
+
+        .poster {
+            width: 50px;
+            height: 75px;
+            margin: 5px;
+            border-radius: 5px;
+            object-fit: cover;
+            cursor: pointer;
+        }
+
+        iframe {
+            display: block;
+            margin: 20px auto;
+            max-width: 100%;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+        }
+
+        #container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .movie-details {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .movie-details h3 {
+            font-size: 1.5rem;
+            margin: 10px 0;
+        }
+
+        .movie-details p {
+            font-size: 1.1rem;
+        }
+
+        .poster-large {
+            width: 200px;
+            height: 300px;
+            margin: 20px 0;
+            object-fit: cover;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Dark Mode Styling for Movie Details */
+        body.dark-mode .movie-details {
+            background-color: #444;
+            color: #fff;
+            border-radius: 10px;
+            padding: 20px;
+        }
+
+        body.dark-mode .movie-details h3 {
+            color: #fff;
+        }
+
+        body.dark-mode .movie-details p {
+            color: #ccc;
+        }
+
+        body.dark-mode .movie-details .movie-title {
+            font-weight: bold;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            #Title {
+                font-size: 1.8rem;
+            }
+
+            iframe {
+                width: 100%;
+                height: 400px;
+            }
+
+            label, #movie_name, button {
+                font-size: 1rem;
+                margin-bottom: 10px;
+                width: 100%;
+                display: block;
+            }
+
+            .poster-container {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .suggestion-item {
+                flex: 1 0 100%;
+                padding: 5px;
+            }
+
+            .poster {
+                width: 60px;
+                height: 90px;
+            }
+
+            .poster-large {
+                width: 150px;
+                height: 225px;
+            }
+        }
+    </style>
+</head>
+<body class="dark-mode"> <!-- Default dark mode enabled -->
+    <header>
+        <nav>
+            <h1 id="Title" style="display: flex; justify-content: center; align-items: center;">
+                Chill Guy Watching Movie
+                <img id="dark-mode-logo" src="chill guy black.jpg" alt="Dim Light Bulb" style="margin-left: 300px;">
+            </h1>
+            
+            <div id="dark-mode-container">
+                <button id="flip">Dark Mode On <img id="dark-mode-logo" src="chill guy black.jpg"  alt="Dim Light Bulb"></button>
+            </div>
+        </nav>
+    </header>
+    <div style="text-align: center; margin: 20px 0; position: relative;">
+        <label for="movie_name">Enter Movie Name:</label>
+        <input id="movie_name" type="text">
+        <button id="update_btn">Load Movie</button>
+        <div id="suggestions"></div>
+    </div>
+
+    <div id="container">
+        <div class="movie-details" id="movie-details-container">
+            <!-- Default Text before Movie Data -->
+            <h2 style="font-weight: bold; font-size: 1.5rem;">Skepsis Ne Bola Krneka To Krneka :)</h2>
+        </div>
+    </div>
+
+    <iframe id="movie_iframe" style="width: 1500px; height: 750px;" frameborder="1" referrerpolicy="origin" allowfullscreen></iframe>
+
+    <h2 style="text-align: center;">Made By : Saikat(ChatGpt tbh . . . "just a chill guy")</h2>
+    <main id="container"></main>
+
+    <script>
+        const apiKey = 'f744f0e2'; // Replace with your OMDb API key
+
+        // Get references to elements
+        const movieInput = document.getElementById('movie_name');
+        const updateButton = document.getElementById('update_btn');
+        const iframe = document.getElementById('movie_iframe');
+        const darkModeButton = document.getElementById('flip');
+        const suggestionsBox = document.getElementById('suggestions');
+        const movieDetailsContainer = document.getElementById('movie-details-container');
+        const postersContainer = document.getElementById('suggestions');
+
+        // Dark mode toggle functionality
+        darkModeButton.addEventListener('click', () => {
+            document.body.classList.toggle('dark-mode');
+            if (document.body.classList.contains('dark-mode')) {
+                darkModeButton.textContent = 'Dark Mode On';
+                darkModeButton.querySelector('img').src = 'https://upload.wikimedia.org/wikipedia/commons/thumb/6/69/Lightbulb_dimming_icon.svg/1200px-Lightbulb_dimming_icon.svg.png';
+            } else {
+                darkModeButton.textContent = 'Dark Mode Off';
+                darkModeButton.querySelector('img').src = 'https://upload.wikimedia.org/wikipedia/commons/thumb/5/5e/Light_bulb_idea.svg/1200px-Light_bulb_idea.svg.png';
+            }
+        });
+
+        // Show suggestions as user types
+        movieInput.addEventListener('input', () => {
+            const query = movieInput.value.trim();
+            if (query) {
+                fetch(`https://www.omdbapi.com/?s=${query}&apikey=${apiKey}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        suggestionsBox.innerHTML = '';
+                        if (data.Response === "True") {
+                            data.Search.forEach(movie => {
+                                const suggestionItem = document.createElement('div');
+                                suggestionItem.textContent = movie.Title;
+                                suggestionItem.classList.add('suggestion-item');
+                                suggestionItem.addEventListener('click', () => {
+                                    movieInput.value = movie.Title;
+                                    suggestionsBox.innerHTML = '';  // Clear suggestions
+                                    fetchMovieData(movie.imdbID);
+                                });
+                                suggestionsBox.appendChild(suggestionItem);
+
+                                // Display poster thumbnails next to suggestions
+                                const poster = document.createElement('img');
+                                poster.src = movie.Poster !== "N/A" ? movie.Poster : "https://via.placeholder.com/50x75?text=No+Poster";
+                                poster.classList.add('poster');
+                                postersContainer.appendChild(poster);
+                            });
+                        }
+                    });
+            } else {
+                suggestionsBox.innerHTML = '';
+            }
+        });
+
+        // Fetch movie data from OMDb API
+        function fetchMovieData(imdbID) {
+            fetch(`https://www.omdbapi.com/?i=${imdbID}&apikey=${apiKey}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.Response === "True") {
+                        iframe.src = `https://vidsrc.xyz/embed/movie?imdb=${data.imdbID}`;
+                        movieDetailsContainer.innerHTML = `
+                            <h2>Movie Details</h2>
+                            <img src="${data.Poster}" alt="${data.Title}" class="poster-large">
+                            <h3 class="movie-title">${data.Title} (${data.Year})</h3>
+                            <p><strong>IMDb Rating:</strong> ${data.imdbRating}</p>
+                            <p><strong>Cast:</strong> ${data.Actors}</p>
+                            <p><strong>Storyline:</strong> ${data.Plot}</p>
+                        `;
+                    } else {
+                        alert('Movie not found.');
+                    }
+                })
+                .catch(error => {
+                    alert('Error fetching movie data.');
+                    console.error(error);
+                });
+        }
+
+        updateButton.addEventListener('click', () => {
+            const movieName = movieInput.value.trim();
+            if (movieName) {
+                fetch(`https://www.omdbapi.com/?t=${movieName}&apikey=${apiKey}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.Response === "True") {
+                            iframe.src = `https://vidsrc.xyz/embed/movie?imdb=${data.imdbID}`;
+                            movieDetailsContainer.innerHTML = `
+                                <h2>Movie Details</h2>
+                                <img src="${data.Poster}" alt="${data.Title}" class="poster-large">
+                                <h3 class="movie-title">${data.Title} (${data.Year})</h3>
+                                <p><strong>IMDb Rating:</strong> ${data.imdbRating}</p>
+                                <p><strong>Cast:</strong> ${data.Actors}</p>
+                                <p><strong>Storyline:</strong> ${data.Plot}</p>
+                            `;
+                        } else {
+                            alert('Movie not found.');
+                        }
+                    })
+                    .catch(error => {
+                        alert('Error fetching movie data.');
+                        console.error(error);
+                    });
+            }
+        });
+    </script>
+</body>
+</html>
